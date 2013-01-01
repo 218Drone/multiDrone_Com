@@ -113,6 +113,7 @@ def decode_position(rec_str):
 #cmds.wait_valid()
 #print " Home WP: %s" % cmds[0]
 
+
 #arm_and_takeoff(3.5)
 
 '''
@@ -163,7 +164,7 @@ if myserial.isOpen():
     	    print "neighbourLat: ", neighbourLat
     	    print "neighbourLon: ", neighbourLon
     	    if neighbourLon == "" or neighbourLat == "":
-    	    	lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
+    	    	#lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
     	    	not_received_flag = 1
     	    	
     	    if not_received_flag == 0:

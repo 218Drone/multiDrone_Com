@@ -128,15 +128,26 @@ cmds.download()
 cmds.wait_valid()
 print " Home WP: %s" % cmds[0]
 
+# open the serial port between odroid and zibgee
+myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
+print myserial.portstr
+test="";
+while True:
+	myserial.write("ok")
+	time.sleep(500)
+	test = myserial.readline();
+	time.sleep(500)
+	if test:
+		print "communicate OK"
+		break
+
 #arm_and_takeoff(3.5)
 
 '''
 After the vehicle reaches a target height, do other things
 '''
 
-# open the serial port between odroid and zibgee
-myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
-print myserial.portstr
+
 
 if myserial.isOpen():
 
@@ -183,7 +194,7 @@ if myserial.isOpen():
     	    print "neighbourLat: ", neighbourLat
     	    print "neighbourLon: ", neighbourLon
     	    if neighbourLon == "" or neighbourLat == "":      # if receives no datas or decodes incorrecet
-    	    	lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
+    	    	#lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
     	    	not_received_flag = 1
     	    	
     	    if not_received_flag == 0:
