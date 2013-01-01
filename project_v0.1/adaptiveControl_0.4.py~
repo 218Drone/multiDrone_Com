@@ -212,7 +212,8 @@ if myserial.isOpen():
 				leader.controller(leader.x * 10000, neighbourLat * 10000, leader.y * 10000, neighbourLon * 10000)
 				#save velocity
 				#read.write("\n")
-				read.write("vx:"+str(leader.vx)+"vy:"+str(leader.vy)+"\n");
+				read.write("vx:"+str(leader.vx)+" vy:"+str(leader.vy)+"\n");
+				read.write("lat:"+str(leader.x)+" lon:"+str(leader.y)+"\n");
 				if leader.vx >= 1: #speed protection
 					leader.vx = 1
 				elif leader.vx <= -1:
