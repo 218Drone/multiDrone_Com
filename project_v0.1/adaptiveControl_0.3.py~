@@ -131,30 +131,13 @@ print " Home WP: %s" % cmds[0]
 # open the serial port between odroid and zibgee
 myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
-test="";
-while True:
-	myserial.write("ok")
-	time.sleep(500)
-	test = myserial.readline();
-	time.sleep(500)
-	if test:
-		print "communicate OK"
-		break
-
-#arm_and_takeoff(3.5)
-
-'''
-After the vehicle reaches a target height, do other things
-'''
-
-
 
 if myserial.isOpen():
 
     '''initialise datas'''
     delt_T = 500  #500ms
     lastRecord = current_milli_time()
-    positionList = ["", ""]
+    positionList = [255.0, 255.0]
     loop_cnt = 1
     CONST_VX0 = 0.0
     CONST_VY0 = 0.0
@@ -166,6 +149,25 @@ if myserial.isOpen():
     #主线程退出时，子线程也退出
     childThread.setDaemon(True)
     childThread.start()
+    
+    ''' make sure the zigbee conneciton is success before takeing off'''
+    while True:
+		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+     	    	myserial.write('a'+str("%.8f" % vehicle.location.lat))
+		time.sleep(0.5)
+		tempos1 = positionList[0]
+		tempos2 = positionList[1]
+		print "waiting for connecting..."
+		
+		if tempos1 != 255.0 and tempos2 != 255.0:
+			print "connecting ok!"
+			break
+		
+    #arm_and_takeoff(3.5)
+    
+    '''
+    After the vehicle reaches a target height, do other things
+    '''
 
     ''' main thread'''
     #leader object 

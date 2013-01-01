@@ -152,6 +152,9 @@ if myserial.isOpen():
     
     ''' make sure the zigbee conneciton is success before takeing off'''
     while True:
+		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+     	    	myserial.write('a'+str("%.8f" % vehicle.location.lat))
+		time.sleep(0.5)
 		tempos1 = positionList[0]
 		tempos2 = positionList[1]
 		print "waiting for connecting..."
@@ -190,6 +193,7 @@ if myserial.isOpen():
     	    # read
 	    neighbourLon = positionList[0]
 	    neighbourLat = positionList[1]
+	    positionList = [255.0, 255.0]
     	    print "neighbourLat: ", neighbourLat
     	    print "neighbourLon: ", neighbourLon
     	    if neighbourLon == "" or neighbourLat == "":      # if receives no datas or decodes incorrecet
