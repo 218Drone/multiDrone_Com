@@ -152,7 +152,7 @@ if myserial.isOpen():
 		neighbourLon, neighbourLat = decode_position(receivedDatas)
 		print "neighbourLat: " + neighbourLat
 		print "neighbourLon: " + neighbourLon
-		while neighbourLon == "" or neighbourLat == "":
+		if neighbourLon == "" or neighbourLat == "":
 			lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
 			not_received_flag = 1
     	    	
