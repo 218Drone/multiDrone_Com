@@ -104,14 +104,15 @@ def decode_position(rec_str):
 		return "", ""
 
 
-# Get Vehicle Home location ((0 index in Vehicle.commands)
-print "Get home location" 
-cmds = vehicle.commands
-cmds.download()
-cmds.wait_valid()
-print " Home WP: %s" % cmds[0]
 
-arm_and_takeoff(3.5)
+# Get Vehicle Home location ((0 index in Vehicle.commands)
+#print "Get home location" 
+#cmds = vehicle.commands
+#cmds.download()
+#cmds.wait_valid()
+#print " Home WP: %s" % cmds[0]
+
+#arm_and_takeoff(3.5)
 
 '''
 After the vehicle reaches a target height, do other things
@@ -125,7 +126,11 @@ if myserial.isOpen():
 
     '''initialise datas'''
     receivedDatas = ""
+<<<<<<< HEAD
     delt_T = 1000  #500ms
+=======
+    delt_T = 500  
+>>>>>>> 813ba01e9d4c62459cb14cb9a2c709f4026b8842
     lastRecord = current_milli_time()
     loop_cnt = 1
     CONST_VX0 = 0.0
@@ -140,14 +145,20 @@ if myserial.isOpen():
 
         not_received_flag = 0
 
+<<<<<<< HEAD
         if v.mode.name != "GUIDED":
 		    print "User has changed fight mode, aborting loop!"
+=======
+    	if vehicle.mode.name != "GUIDED":
+		print "User has changed fight mode, aborting loop!"
+>>>>>>> 813ba01e9d4c62459cb14cb9a2c709f4026b8842
 	        break
         if current_milli_time() - lastRecord >= delt_T:  #500ms
     	    lastRecord = current_milli_time()
     	    print "[%s] current time is: %f" % (loop_cnt, lastRecord)
     	    loop_cnt += 1
 
+<<<<<<< HEAD
     	    # write
     	    myserial.write('o'+str("%.8f" % vehicle.location.lon))
 		    myserial.write('a'+str("%.8f" % vehicle.location.lat))
@@ -177,9 +188,40 @@ if myserial.isOpen():
 					leader.vy = -4
 
 				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
+=======
+    		# write
+		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+		myserial.write('a'+str("%.8f" % vehicle.location.lat))
+
+    		# read
+		receivedDatas = myserial.readline()
+		neighbourLon, neighbourLat = decode_position(receivedDatas)
+		print "neighbourLat: " + neighbourLat
+		print "neighbourLon: " + neighbourLon
+		if neighbourLon == "" or neighbourLat == "":
+			lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
+			not_received_flag = 1
+    	    	
+		if not_received_flag==0:
+			# control
+			leader.x = vehicle.location.lon
+			leader.y = vehicle.location.lat
+			leader.controller(leader.x * 10000, neighbourLon * 10000, leader.y * 10000, neighbourLat * 10000)
+
+			if leader.vx >= 4: #speed protection
+				leader.vx = 4
+			elif leader.vx <= -4:
+				leader.vx = -4
+			if leader.vy >= 4:
+				leader.vy = 4
+			elif leader.vy <= -4:
+				leader.vy = -4
+
+			send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
+>>>>>>> 813ba01e9d4c62459cb14cb9a2c709f4026b8842
 
     '''finished and landing'''
-	vehicle.mode = VehicleMode("LAND") 
+    vehicle.mode = VehicleMode("LAND") 
     	
 else:
     print 'serial port do not open!'
