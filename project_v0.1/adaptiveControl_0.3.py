@@ -152,6 +152,9 @@ if myserial.isOpen():
     
     ''' make sure the zigbee conneciton is success before takeing off'''
     while True:
+		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+		myserial.write('a'+str("%.8f" % vehicle.location.lat))
+		time.sleep(0.5)
 		tempos1 = positionList[0]
 		tempos2 = positionList[1]
 		print "waiting for connecting..."
