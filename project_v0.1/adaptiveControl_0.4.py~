@@ -132,6 +132,10 @@ print " Home WP: %s" % cmds[0]
 myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
 
+# open or create a file
+read = file('velocity','a+')
+
+
 if myserial.isOpen():
 
     '''initialise datas'''
@@ -215,12 +219,14 @@ if myserial.isOpen():
 					leader.vy = 1
 				elif leader.vy <= -1:
 					leader.vy = -1
-
+				#save velocity
+				#read.write("\n")
+				read.write("vx:"+str(vx)+"vy"+str(vy)+"\n");
 				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
 
     '''finished and landing'''
     vehicle.mode = VehicleMode("LAND") 
-    	
+    read.close	
 else:
     print 'serial port do not open!'
     myserial.closeCon()
