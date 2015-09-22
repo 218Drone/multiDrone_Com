@@ -1,0 +1,26 @@
+#coding=utf-8
+import matplotlib.pyplot as plt
+frame=[50,
+100,
+150,
+200,
+250,
+300,
+350,
+400,
+450
+]
+dis=[
+9,
+9,
+6.325,
+3.634,
+1.828,
+0.724,
+0.325,
+0.127,
+0.103
+]
+plt.figure(1)
+plt.plot(frame,dis)
+plt.show()
