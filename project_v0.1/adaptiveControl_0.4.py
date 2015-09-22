@@ -6,13 +6,15 @@ Use gps position of another quadrotors which is sent by zigbee.
 @author: Peng Cheng
 		 Hongliang Shen
 		 Xi Zhang 
-@date: 2015/9/6 21:19 
+@date: 2015/9/6    21:19    v0.2: the original version.
+	   2015/9/10   21:40    v0.3: use a child thread to read datas for better instantaneity.
 		
 """
 from droneapi.lib import VehicleMode, Location
 from pymavlink import mavutil
 import time
 import serial
+import threading
 
 from leaderControl import leaderControl
 
@@ -45,7 +47,7 @@ def arm_and_takeoff(aTargetAltitude):
 		time.sleep(1)
 
 	print "Take off!"
-	Vehicle.commands.takeoff(aTargetAltitude)
+	vehicle.commands.takeoff(aTargetAltitude)
 	vehicle.flush()
 
 	#Wait until the vehicle reaches a safe height
@@ -104,38 +106,74 @@ def decode_position(rec_str):
 	else:
 		return "", ""
 
+# function: the child thread running function, which
+#           monitors the serial port all the time 
+def readThread(positionList):
+	print "child thread begins!"
+	receivedDatas = ""
+	#global neighbourLon, neighbourLat
+	while True:
+		receivedDatas = myserial.read(myserial.inWaiting())
+		if receivedDatas:
+			#print "rec: ", receivedDatas
+			positionList[0], positionList[1] = decode_position(receivedDatas)
+			#print "neighbourLot: ", positionList[0]
+			#print "neighbourLat: ", positionList[1]
 
 
 # Get Vehicle Home location ((0 index in Vehicle.commands)
-#print "Get home location" 
-#cmds = vehicle.commands
-#cmds.download()
-#cmds.wait_valid()
-#print " Home WP: %s" % cmds[0]
-
-
-#arm_and_takeoff(3.5)
-
-'''
-After the vehicle reaches a target height, do other things
-'''
+print "Get home location" 
+cmds = vehicle.commands
+cmds.download()
+cmds.wait_valid()
+print " Home WP: %s" % cmds[0]
 
 # open the serial port between odroid and zibgee
-myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=0.8)  # read timeout is 0.5s
+myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
+
+# open or create a file
+read = file('velocity','a+')
+
 
 if myserial.isOpen():
 
     '''initialise datas'''
-    receivedDatas = ""
     delt_T = 1000  #500ms
-
     lastRecord = current_milli_time()
+    positionList = [255.0, 255.0]
     loop_cnt = 1
     CONST_VX0 = 0.0
     CONST_VY0 = 0.0
-    CONST_D12 = pow(0.1111, 2)
+    CONST_D12 = 0.614
     not_received_flag = 0
+
+    ''' child thread'''
+    childThread = threading.Thread(target = readThread, args = (positionList, ))
+    #主线程退出时，子线程也退出
+    childThread.setDaemon(True)
+    childThread.start()
+    
+    ''' make sure the zigbee conneciton is success before takeing off'''
+    while True:
+		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+     	    	myserial.write('a'+str("%.8f" % vehicle.location.lat))
+		time.sleep(0.5)
+		tempos1 = positionList[0]
+		tempos2 = positionList[1]
+		print "waiting for connecting..."
+		
+		if tempos1 != 255.0 and tempos2 != 255.0:
+			print "connecting ok!"
+			break
+		
+    arm_and_takeoff(3.5)
+    
+    '''
+    After the vehicle reaches a target height, do other things
+    '''
+
+    ''' main thread'''
     #leader object 
     leader = leaderControl(CONST_VX0, CONST_VY0, CONST_D12, vehicle.location.lat, vehicle.location.lon)  #vx0 = 0.5, vy0 = 0.5, x0 = vehicle.location.lat, y0 = vehicle.location.lon
 
@@ -144,51 +182,53 @@ if myserial.isOpen():
 
         not_received_flag = 0
 
-    	if vehicle.mode.name != "GUIDED":
+        if vehicle.mode.name != "GUIDED":
 		print "User has changed fight mode, aborting loop!"
-
 	        break
         if current_milli_time() - lastRecord >= delt_T:  #500ms
     	    lastRecord = current_milli_time()
     	    print "[%s] current time is: %f" % (loop_cnt, lastRecord)
     	    loop_cnt += 1
 
-
     	    # write
     	    myserial.write('o'+str("%.8f" % vehicle.location.lon))
-	    myserial.write('a'+str("%.8f" % vehicle.location.lat))
+     	    myserial.write('a'+str("%.8f" % vehicle.location.lat))
 
     	    # read
-    	    receivedDatas = myserial.readline()
-    	    neighbourLon, neighbourLat = decode_position(receivedDatas)
+	    neighbourLon = positionList[0]
+	    neighbourLat = positionList[1]
+	    #positionList[0] = 255.0
+	    #positionList[1] = 255.0
     	    print "neighbourLat: ", neighbourLat
     	    print "neighbourLon: ", neighbourLon
-    	    if neighbourLon == "" or neighbourLat == "":
+    	    if neighbourLon == "" or neighbourLat == "":      # if receives no datas or decodes incorrecet
     	    	#lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
     	    	not_received_flag = 1
     	    	
     	    if not_received_flag == 0:
 				# control
-				leader.x = vehicle.location.lon
-				leader.y = vehicle.location.lat
-				leader.controller(leader.x * 10000, neighbourLon * 10000, leader.y * 10000, neighbourLat * 10000)
-
-				if leader.vx >= 4: #speed protection
-					leader.vx = 4
-				elif leader.vx <= -4:
-					leader.vx = -4
-				if leader.vy >= 4:
-					leader.vy = 4
-				elif leader.vy <= -4:
-					leader.vy = -4
-
+				leader.x = vehicle.location.lat
+				leader.y = vehicle.location.lon
+				leader.controller(leader.x * 10000, neighbourLat * 10000, leader.y * 10000, neighbourLon * 10000)
+				#save velocity
+				#read.write("\n")
+				read.write("vx:"+str(leader.vx)+"vy:"+str(leader.vy)+"\n");
+				if leader.vx >= 1: #speed protection
+					leader.vx = 1
+				elif leader.vx <= -1:
+					leader.vx = -1
+				if leader.vy >= 1:
+					leader.vy = 1
+				elif leader.vy <= -1:
+					leader.vy = -1
+				
 				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
 
     '''finished and landing'''
     vehicle.mode = VehicleMode("LAND") 
-    	
+    read.close	
 else:
     print 'serial port do not open!'
-    self.closeCon()
+    myserial.closeCon()
     time.sleep(2)
     vehicle.mode = VehicleMode("LAND")

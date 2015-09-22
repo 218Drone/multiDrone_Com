@@ -112,7 +112,12 @@ def decode_position(rec_str):
 #cmds.download()
 #cmds.wait_valid()
 #print " Home WP: %s" % cmds[0]
-
+# open the serial port between odroid and zibgee
+myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=0.8)  # read timeout is 0.5s
+print myserial.portstr
+while True:
+	myserial.write("ok");
+	time.sleep(0.5)
 
 #arm_and_takeoff(3.5)
 
@@ -120,9 +125,7 @@ def decode_position(rec_str):
 After the vehicle reaches a target height, do other things
 '''
 
-# open the serial port between odroid and zibgee
-myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=0.8)  # read timeout is 0.5s
-print myserial.portstr
+
 
 if myserial.isOpen():
 
