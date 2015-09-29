@@ -167,7 +167,7 @@ if myserial.isOpen():
 			print "connecting ok!"
 			break
 		
-    arm_and_takeoff(3.5)
+    #arm_and_takeoff(3.5)
     
     '''
     After the vehicle reaches a target height, do other things
