@@ -167,7 +167,7 @@ if myserial.isOpen():
 			print "connecting ok!"
 			break
 		
-    arm_and_takeoff(3.5)
+    #arm_and_takeoff(3.5)
     
     '''
     After the vehicle reaches a target height, do other things
@@ -210,7 +210,10 @@ if myserial.isOpen():
 				leader.x = vehicle.location.lat
 				leader.y = vehicle.location.lon
 				leader.controller(leader.x * 10000, neighbourLat * 10000, leader.y * 10000, neighbourLon * 10000)
-
+				#save velocity
+				#read.write("\n")
+				read.write("vx:"+str(leader.vx)+" vy:"+str(leader.vy));
+				read.write("lat:"+str(leader.x)+" lon:"+str(leader.y)+"\n");
 				if leader.vx >= 1: #speed protection
 					leader.vx = 1
 				elif leader.vx <= -1:
@@ -219,9 +222,7 @@ if myserial.isOpen():
 					leader.vy = 1
 				elif leader.vy <= -1:
 					leader.vy = -1
-				#save velocity
-				#read.write("\n")
-				read.write("vx:"+str(vx)+"vy"+str(vy)+"\n");
+				
 				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
 
     '''finished and landing'''

@@ -6,6 +6,8 @@ Adaptive control algorithm class for leaders, to keep two leaders matianing a co
 		
 """
 import time
+import numpy as np
+import matplotlib.pyplot as plt
 
 current_milli_time = lambda: int(time.time() * 1000)
 
@@ -36,12 +38,16 @@ class leaderControl(object):
 	'''
 
 if __name__ == "__main__":
-	leader1 = leaderControl(1.0, 1.0, 2.0, 0.0, 0.0)
-	leader2 = leaderControl(1.0, 1.0, 2.0, 10.0, 0.0)
+	leader1 = leaderControl(0.0, 0.0, 2.0, 0.0, 8.0)
+	leader2 = leaderControl(0.0, 0.0, 2.0, 10.0, 0.0)
 	delt_T = 0.5  #s
 	lastRecord = current_milli_time()
 	cnt = 0
-	while True:
+	leader1X=[]
+	leader1Y=[]
+	leader2X=[]
+	leader2Y=[]
+	while cnt<50:
 		if current_milli_time() - lastRecord >= 500:  #ms
 			print "[%d] current time is: " % cnt + str(current_milli_time())
 			lastRecord = current_milli_time()
@@ -58,7 +64,10 @@ if __name__ == "__main__":
 			leader2.y += leader2.vy * delt_T
 
 			cnt += 1
-
+			leader1X.append(leader1.x)
+			leader1Y.append(leader1.y)
+			leader2X.append(leader2.x)
+			leader2Y.append(leader2.y)
 			print "x1:" + str(leader1.x)
 			print "y1:" + str(leader1.y)
 			print "x2:" + str(leader2.x)
@@ -66,3 +75,9 @@ if __name__ == "__main__":
 		else:
 			pass
 		
+	plt.figure(1)
+	plt.plot(leader1X,leader1Y)
+	plt.plot(leader2X,leader2Y)
+	plt.show()
+	
+
