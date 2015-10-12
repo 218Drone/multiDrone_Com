@@ -45,7 +45,7 @@ def arm_and_takeoff(aTargetAltitude):
 			break;
 		time.sleep(1)
 
-# controlling vehicle movement using velocity
+# controlling vehicle movement using velocity MAV_FRAME_BODY_NED
 def send_ned_velocity(velocity_x, velocity_y, velocity_z):
     """
     Move vehicle in direction based on specified velocity vectors.
@@ -53,7 +53,7 @@ def send_ned_velocity(velocity_x, velocity_y, velocity_z):
     msg = vehicle.message_factory.set_position_target_local_ned_encode(
         0,       # time_boot_ms (not used)
         0, 0,    # target system, target component
-        mavutil.mavlink.MAV_FRAME_BODY_NED, # frame
+        mavutil.mavlink.MAV_FRAME_LOCAL_NED, # frame
         0b0000111111000111, # type_mask (only speeds enabled)
         0, 0, 0, # x, y, z positions (not used)
         velocity_x, velocity_y, velocity_z, # x, y, z velocity in m/s
@@ -64,9 +64,52 @@ def send_ned_velocity(velocity_x, velocity_y, velocity_z):
     vehicle.flush()
 
 
+
+def send_global_velocity(velocity_x, velocity_y, velocity_z):
+    """
+    Move vehicle in direction based on specified velocity vectors.
+    """
+    msg = vehicle.message_factory.set_position_target_global_int_encode(
+        0,       # time_boot_ms (not used)
+        0, 0,    # target system, target component
+        mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT_INT, # frame
+        0b0000111111000111, # type_mask (only speeds enabled)
+        0, # lat_int - X Position in WGS84 frame in 1e7 * meters
+        0, # lon_int - Y Position in WGS84 frame in 1e7 * meters
+        0, # alt - Altitude in meters in AMSL altitude(not WGS84 if absolute or relative)
+                   # altitude above terrain if GLOBAL_TERRAIN_ALT_INT
+        velocity_x, # X velocity in NED frame in m/s
+                velocity_y, # Y velocity in NED frame in m/s
+                velocity_z, # Z velocity in NED frame in m/s
+        0, 0, 0, # afx, afy, afz acceleration (not supported yet, ignored in GCS_Mavlink)
+        0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
+    # send command to vehicle
+    vehicle.send_mavlink(msg)
+    vehicle.flush()
+
+
+# set_yaw - send condition_yaw mavlink command to vehicle so it points at specified heading (in degrees)
+def set_yaw(heading):
+    # create the CONDITION_YAW command
+    msg = vehicle.message_factory.mission_item_encode(0, 0,  # target system, target component
+                                             0,     # sequence
+                                             mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT, # frame
+                                             mavutil.mavlink.MAV_CMD_CONDITION_YAW,         # command
+                                             2, # current - set to 2 to make it a guided command
+                                             0, # auto continue
+                                             heading, 0, 0, 0, 0, 0, 0) # param 1 ~ 7
+    # send command to vehicle
+    vehicle.send_mavlink(msg)
+    vehicle.flush()
+
+
+
 arm_and_takeoff(2.5)
-send_ned_velocity(1, 0, 0)
-time.sleep(2)
+set_yaw(90)
+time.sleep(5)
+send_global_velocity(0,1,0)
+#send_ned_velocity(0, 10, 0)
+time.sleep(5)
 beginTime = current_milli_time()
 
 # open or create a file
