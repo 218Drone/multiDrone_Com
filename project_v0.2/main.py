@@ -42,12 +42,13 @@ def func_exit():
 f_list = {'1': func_1, '2': func_2, '3': func_3, '4': func_4, 'x': func_exit}
 
 while True:
-	'''input number!'''
-	ch = raw_input()
 	try:
-		f_list.get(ch)()
-	except Exception, e:
-		print e, "\nPlease input number between 1~4!"
-
-
+		'''input number!'''
+		ch = raw_input()
+		try:
+			f_list.get(ch)()
+		except Exception, e:
+			print e, "\nPlease input number between 1~4!"
+	except KeyboardInterrupt:
+		break
 
