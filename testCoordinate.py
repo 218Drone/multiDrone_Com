@@ -107,7 +107,7 @@ def set_yaw(heading):
 arm_and_takeoff(2.5)
 set_yaw(90)
 time.sleep(5)
-send_global_velocity(0,1,0)
+send_global_velocity(0, -1, 0)
 #send_ned_velocity(0, 10, 0)
 time.sleep(5)
 beginTime = current_milli_time()

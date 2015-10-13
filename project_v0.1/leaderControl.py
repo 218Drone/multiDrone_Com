@@ -7,7 +7,7 @@ Adaptive control algorithm class for leaders, to keep two leaders matianing a co
 """
 import time
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 current_milli_time = lambda: int(time.time() * 1000)
 
@@ -36,7 +36,7 @@ class leaderControl(object):
 	def run(self, vx, vy):
 		send_ned_velocity(vx, vy, 0)  # vz = 0.0
 	'''
-
+'''
 if __name__ == "__main__":
 	leader1 = leaderControl(0.0, 0.0, 2.0, 0.0, 8.0)
 	leader2 = leaderControl(0.0, 0.0, 2.0, 10.0, 0.0)
@@ -75,5 +75,4 @@ if __name__ == "__main__":
 	plt.plot(leader1X,leader1Y)
 	plt.plot(leader2X,leader2Y)
 	plt.show()
-	
-
+'''
