@@ -24,16 +24,17 @@ print "Press 'x' and 'enter' to quit!"
 print "======================================================"
 
 def func_1():
-	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/1.py")
+	os.system("python /home/odroid/multiDrone_Com/project_v0.2/1.py")
 
 def func_2():
-	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/2.py")
+	os.system("python /home/odroid/multiDrone_Com/project_v0.2/2.py")
 
 def func_3():
-	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/3.py")
+	os.system("python /home/odroid/multiDrone_Com/project_v0.2/3.py")
 
 def func_4():
-	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/4.py")
+	os.system("python /home/odroid/multiDrone_Com/project_v0.2/4.py")
+
 
 def func_exit():
 	print "exit!"
@@ -41,14 +42,10 @@ def func_exit():
 
 f_list = {'1': func_1, '2': func_2, '3': func_3, '4': func_4, 'x': func_exit}
 
-while True:
-	try:
-		'''input number!'''
-		ch = raw_input()
-		try:
-			f_list.get(ch)()
-		except Exception, e:
-			print e, "\nPlease input number between 1~4!"
-	except KeyboardInterrupt:
-		break
-
+'''input number!'''
+ch = raw_input()
+try:
+	f_list.get(ch)()
+except Exception, e:
+	print e, "\nException occured: Unexpected input!"
+	sys.exit(0)
