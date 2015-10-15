@@ -79,8 +79,8 @@ def send_global_velocity(velocity_x, velocity_y, velocity_z):
         0, # alt - Altitude in meters in AMSL altitude(not WGS84 if absolute or relative)
                    # altitude above terrain if GLOBAL_TERRAIN_ALT_INT
         velocity_x, # X velocity in NED frame in m/s
-                velocity_y, # Y velocity in NED frame in m/s
-                velocity_z, # Z velocity in NED frame in m/s
+        velocity_y, # Y velocity in NED frame in m/s
+        velocity_z, # Z velocity in NED frame in m/s
         0, 0, 0, # afx, afy, afz acceleration (not supported yet, ignored in GCS_Mavlink)
         0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
     # send command to vehicle
@@ -105,9 +105,9 @@ def set_yaw(heading):
 
 
 arm_and_takeoff(2.5)
-set_yaw(90)
+#set_yaw(60)
 time.sleep(5)
-send_global_velocity(0, -1, 0)
+send_ned_velocity(0, -1, 0)
 #send_ned_velocity(0, 10, 0)
 time.sleep(5)
 beginTime = current_milli_time()

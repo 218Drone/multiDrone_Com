@@ -24,16 +24,16 @@ print "Press 'x' and 'enter' to quit!"
 print "======================================================"
 
 def func_1():
-	os.system("python 1.py")
+	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/1.py")
 
 def func_2():
-	os.system("python 2.py")
+	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/2.py")
 
 def func_3():
-	os.system("python 3.py")
+	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/3.py")
 
 def func_4():
-	os.system("python 4.py")
+	os.system("python /home/odroid/218Drone/multiDrone_Com/project_v0.2/4.py")
 
 def func_exit():
 	print "exit!"
