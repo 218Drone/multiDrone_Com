@@ -233,11 +233,13 @@ if myserial.isOpen():
 				# control
 				leader.x = vehicle.location.lat
 				leader.y = vehicle.location.lon
+				realV    = vehicle.velocity
 				leader.controller(leader.x * 10000, neighbourLat * 10000, leader.y * 10000, neighbourLon * 10000)
 				#save velocity
 				#read.write("\n")
 				read.write(str(leader.vx)+" "+str(leader.vy)+" ");
 				read.write(str(leader.x)+" "+str(leader.y)+" ");
+				read.write(str(realV[0])+" "+str(realV[1])+" "+str(realV[2])+" ");
 				read.write(str(current_milli_time())+"\n")
 				if leader.vx >= 1: #speed protection
 					leader.vx = 1
@@ -249,7 +251,7 @@ if myserial.isOpen():
 					leader.vy = -1
 				
 				#send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
-				send_global_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
+				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
 
     '''finished and landing'''
     vehicle.mode = VehicleMode("LAND") 

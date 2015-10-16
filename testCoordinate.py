@@ -109,6 +109,7 @@ arm_and_takeoff(2.5)
 time.sleep(5)
 send_ned_velocity(0, -1, 0)
 #send_ned_velocity(0, 10, 0)
+#print vehicle.velocity
 time.sleep(5)
 beginTime = current_milli_time()
 
@@ -117,7 +118,10 @@ f = file('location','a+')
 
 while not api.exit:
 	while current_milli_time() - beginTime < 10000: #10s
-		f.write(str(vehicle.location.lon)+" "+str(vehicle.location.lat)+"\n");
+		f.write(str(vehicle.location.lon)+" "+str(vehicle.location.lat)+"\n")
+		realV    = vehicle.velocity
+		f.write(str(realV[0])+" "+str(realV[1])+" "+str(realV[2])+"\n")
+		time.sleep(0.1)
 	break
 
 vehicle.mode = VehicleMode("LAND")
