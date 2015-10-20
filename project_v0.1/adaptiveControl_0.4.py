@@ -240,7 +240,7 @@ if myserial.isOpen():
 				read.write(str(leader.vx)+" "+str(leader.vy)+" ");
 				read.write(str(leader.x)+" "+str(leader.y)+" ");
 				read.write(str(realV[0])+" "+str(realV[1])+" "+str(realV[2])+" ");
-				read.write(str(current_milli_time())+"\n")
+				
 				if leader.vx >= 1: #speed protection
 					leader.vx = 1
 				elif leader.vx <= -1:
@@ -250,7 +250,8 @@ if myserial.isOpen():
 				elif leader.vy <= -1:
 					leader.vy = -1
 				
-				#send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
+				read.write(str(leader.vx)+" "+str(leader.vy)+" ");
+				read.write(str(current_milli_time())+"\n")
 				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
 
     '''finished and landing'''
