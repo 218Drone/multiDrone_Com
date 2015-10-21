@@ -157,7 +157,7 @@ myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
 
 # open or create a file
-read = file('velocity','a+')
+read = file('/home/odroid/218Drone/multiDrone_Com/velocity','a+')
 
 
 if myserial.isOpen():

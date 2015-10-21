@@ -28,8 +28,8 @@ class leaderControl(object):
 	#         y2-the y position of another leader
 	def controller(self, x1, x2, y1, y2):
 		currentDisPow = pow(x1-x2, 2) + pow(y1-y2, 2)
-		self.vx = self.vx0 + (x2 - x1) * (currentDisPow - pow(self.d12, 2)) * 2  #0.02 is arbitrary scale factor
-		self.vy = self.vy0 + (y2 - y1) * (currentDisPow - pow(self.d12, 2)) * 2
+		self.vx = self.vx0 + (x2 - x1) * (currentDisPow - pow(self.d12, 2)) * 5  #0.02 is arbitrary scale factor
+		self.vy = self.vy0 + (y2 - y1) * (currentDisPow - pow(self.d12, 2)) * 5
 
 	# It's better to output control in main function
 	'''
