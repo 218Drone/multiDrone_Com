@@ -1,16 +1,16 @@
 #!/usr/bin/python
 # coding=utf-8
 '''
-@file: fly_line.py
+@file: position_pid.py
 @brief: To control the quadrotor to a given position(not far away!) using pid control method.
 @author: Peng Cheng
-@date: 2015/10/27  cpeng@zju.edu.cn
+@date: 2015/10/26  cpeng@zju.edu.cn
 
 '''
-import time
 from droneapi.lib import VehicleMode, Location
 from pymavlink import mavutil
-import sys, math
+import time
+import math
 
 # function: record currrent time(s)
 current_milli_time = lambda: int(time.time() * 1000)
@@ -20,22 +20,6 @@ api = local_connect()
 # Get the connected vehicle (currently only one vehicle can be returned).
 vehicle = api.get_vehicles()[0]
 
-# theta: the angle of polar coordinate
-# v_max: the velocity of polar oordinate
-theta = 60 * math.pi / 180
-v_max = 2
-
-# get the command parameter
-
-'''
-print len(sys.argv)
-print sys.argv
-if len(sys.argv) <= 1:
-	print "Please input like this: 'fly_line.py theta'. theta=[-180, 180]!"
-elif len(sys.argv) == 2:
-	theta = sys.argv[1]
-	print theta
-'''
 # function: takeoff to the target height
 def arm_and_takeoff(aTargetAltitude):
 	print "Basic pre-arm checks"
@@ -100,30 +84,57 @@ cmds.download()
 cmds.wait_valid()
 print " Home WP: %s" % cmds[0]
 
-send_ned_velocity(0, 1, 0)
-
-delt_T = 1000   #ms
-loop_cnt = 1
-lastRecord = current_milli_time()
-
 # open or create a file
-f = file('/home/odroid/218Drone/multiDrone_Com/test_modules/fly_datalog','a+')
+read = file('/home/odroid/218Drone/multiDrone_Com/test_modules/position_datalog','a+')
+
+R = 6371000    #meters
+
+'''
+@function: to_target_position
+@param: target_pos: {'lon': , 'lat': }
+@note:  frame:
+		x/lat
+		|
+		|
+		|_ _ _ _ y/lon
+'''
+#def to_target_position(max_v, theta, target_pos):
+def to_target_position(target_pos):
+	px = 0.5;
+	py = 0.5;
+	delta_x = R * (target_pos['lat'] - vehicle.location.lat) * float(math.pi / 180)
+	delta_y = R * (target_pos['lon'] - vehicle.location.lon) * float(math.pi / 180)
+	vx = px * delta_x
+	vy = py * delta_y
+	send_ned_velocity(vx, vy, 0)
+
+	return vx, vy
+
+'''initialise datas'''
+delt_T = 1000
+lastRecord = current_milli_time()
+positionList = [255.0, 255.0]
+loop_cnt = 1
+
+home_location = {'lat': cmds[0].x, 'lon': cmds[0].y}
+target_pos = {'lat': home_location['lat']+0.0004, 'lon':home_location['lon']+0.0004}
 
 arm_and_takeoff(3.0)
 
+'''control loop'''
 while not api.exit:
-	if current_milli_time() - lastRecord >= delt_T: #1s
+	if current_milli_time() - lastRecord >= delt_T:
 		lastRecord = current_milli_time()
 		print "[%s] current time is: %f" % (loop_cnt, lastRecord)
-		
 		loop_cnt += 1
 
-		send_ned_velocity(v_max*math.sin(theta), v_max*math.cos(theta), 0)
-		print "vx: %f; vy: %f" % (v_max*math.sin(theta), v_max*math.cos(theta))
+		vx_control, vy_control = to_target_position(target_pos)
+		print "vx: %f; vy: %f" % (vx_control, vy_control)
+
 		realV = vehicle.velocity  #[vx, vy, vz]
-		f.write(str(current_milli_time())+' '+str(realV[0])+' '+str(realV[1])+' ')
-		f.write(str(vehicle.location.lat)+' '+str(vehicle.location.lon)+'\n')
+		read.write(str(current_milli_time())+' '+str(realV[0])+' '+str(realV[1])+' '+str(vx_control)+' '+str(vy_control)+' ')
+		read.write(str(vehicle.location.lat)+' '+str(vehicle.location.lon)+'\n')
 
-vehicle.mode = VehicleMode("LAND")
-f.close
-
+'''finished and landing'''
+vehicle.mode = VehicleMode("LAND") 
+read.close	

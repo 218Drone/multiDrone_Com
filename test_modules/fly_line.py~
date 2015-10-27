@@ -22,7 +22,7 @@ vehicle = api.get_vehicles()[0]
 
 # theta: the angle of polar coordinate
 # v_max: the velocity of polar oordinate
-theta = 60 * math.pi / 180
+theta = 60
 v_max = 2
 
 # get the command parameter

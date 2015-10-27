@@ -102,10 +102,10 @@ R = 6371000    #meters
 def to_target_position(target_pos):
 	px = 0.5;
 	py = 0.5;
-	delta_x = R * (vehicle.location.lat - target_pos['lat']) * float(math.pi / 180)
-	delta_y = R * (vehicle.location.lon - target_pos['lon']) * float(math.pi / 180)
-	vx = px * delta_x1
-	vy = py * delta_y1
+	delta_x = R * (target_pos['lat'] - vehicle.location.lat) * float(math.pi / 180)
+	delta_y = R * (target_pos['lon'] - vehicle.location.lon) * float(math.pi / 180)
+	vx = px * delta_x
+	vy = py * delta_y
 	send_ned_velocity(vx, vy, 0)
 
 	return vx, vy
