@@ -85,7 +85,7 @@ cmds.wait_valid()
 print " Home WP: %s" % cmds[0]
 
 # open or create a file
-read = file('/home/odroid/218Drone/multiDrone_Com/test_modules/position_datalog','a+')
+read = file('/home/odroid/multiDrone_Com/test_modules/position_datalog','a+')
 
 R = 6371000    #meters
 
@@ -100,24 +100,37 @@ R = 6371000    #meters
 '''
 #def to_target_position(max_v, theta, target_pos):
 def to_target_position(target_pos):
-	px = 0.5;
-	py = 0.5;
+	px = 0.1;
+	py = 0.1;
 	delta_x = R * (target_pos['lat'] - vehicle.location.lat) * float(math.pi / 180)
 	delta_y = R * (target_pos['lon'] - vehicle.location.lon) * float(math.pi / 180)
 	vx = px * delta_x
 	vy = py * delta_y
+	
+	if vx >= 1:
+		vx = 1
+	elif vx <= -1:
+		vx = -1
+	if vy >= 1:
+		vy = 1
+	elif vy <= -1:
+		vy = -1
+
 	send_ned_velocity(vx, vy, 0)
 
 	return vx, vy
 
 '''initialise datas'''
-delt_T = 1000
+delt_T = 100
 lastRecord = current_milli_time()
 positionList = [255.0, 255.0]
 loop_cnt = 1
 
 home_location = {'lat': cmds[0].x, 'lon': cmds[0].y}
-target_pos = {'lat': home_location['lat']+0.00004, 'lon':home_location['lon']+0.00004}
+#target_pos = {'lat': home_location['lat']+0.00004, 'lon':home_location['lon']+0.00004}
+
+target_pos = {'lat': 30.2656902, 'lon':120.1195215}
+
 
 arm_and_takeoff(3.0)
 

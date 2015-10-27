@@ -22,7 +22,7 @@ vehicle = api.get_vehicles()[0]
 
 # theta: the angle of polar coordinate
 # v_max: the velocity of polar oordinate
-theta = 60 * math.pi / 180
+theta = -30 * math.pi / 180
 v_max = 2
 
 # get the command parameter
@@ -107,7 +107,7 @@ loop_cnt = 1
 lastRecord = current_milli_time()
 
 # open or create a file
-f = file('/home/odroid/218Drone/multiDrone_Com/test_modules/fly_datalog','a+')
+f = file('/home/odroid/multiDrone_Com/test_modules/fly_datalog','a+')
 
 arm_and_takeoff(3.0)
 
