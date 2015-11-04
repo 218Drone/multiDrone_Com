@@ -158,8 +158,7 @@ myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
 
 # open or create a file
-read = file('/home/odroid/218Drone/multiDrone_Com/velocity','a+')
-
+read = file('/home/odroid/multiDrone_Com/project_v0.1/velocity/datalog_11_4','a+')
 
 if myserial.isOpen():
 
@@ -182,18 +181,18 @@ if myserial.isOpen():
     
     ''' make sure the zigbee conneciton is success before takeing off'''
     while True:
-		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+	myserial.write('o'+str("%.8f" % vehicle.location.lon))
      	myserial.write('a'+str("%.8f" % vehicle.location.lat))
-		time.sleep(0.5)
-		tempos1 = positionList[0]
-		tempos2 = positionList[1]
-		print "waiting for connecting..."
+	time.sleep(0.5)
+	tempos1 = positionList[0]
+	tempos2 = positionList[1]
+	print "waiting for connecting..."
 		
-		if tempos1 != 255.0 and tempos2 != 255.0:
-			print "connecting ok!"
-			break
+	if tempos1 != 255.0 and tempos2 != 255.0:
+		print "connecting ok!"
+		break
 		
-    arm_and_takeoff(3.5)
+    #arm_and_takeoff(3.5)
     
     '''
     After the vehicle reaches a target height, do other things
@@ -230,33 +229,33 @@ if myserial.isOpen():
     			#lastRecord = current_milli_time() - delt_T - 1   # inmediately go into the next loop
     			not_received_flag = 1
     		else:
-    			neighbourLonToMeter = float(math.pi / 180) * R * positionList[0]
-    			neighbourLatToMeter = float(math.pi / 180) * R * positionList[1]
+    			neighbourLonToMeter = float(math.pi / 180) * R * neighbourLon
+    			neighbourLatToMeter = float(math.pi / 180) * R * neighbourLat
 
     		if not_received_flag == 0:
     			# control
     			leader.x = float(math.pi / 180) * R * vehicle.location.lat
     			leader.y = float(math.pi / 180) * R * vehicle.location.lon
-    	    	realV    = vehicle.velocity
-    	    	leader.controller(leader.x, neighbourLatToMeter, leader.y, neighbourLonToMeter)
+    	    		realV    = vehicle.velocity
+    	    		leader.controller(leader.x, neighbourLatToMeter, leader.y, neighbourLonToMeter)
 
-    	    	read.write(str(leader.vx)+" "+str(leader.vy)+" ");
-    	    	read.write(str(vehicle.location.lat)+" "+str(vehicle.location.lon)+" ");
-    	    	read.write(str(realV[0])+" "+str(realV[1])+" "+str(realV[2])+" ");
+    	    		read.write(str(leader.vx)+" "+str(leader.vy)+" ");
+    	    		read.write(str(vehicle.location.lat)+" "+str(vehicle.location.lon)+" ");
+    	    		read.write(str(realV[0])+" "+str(realV[1])+" "+str(realV[2])+" ");
 
-    	    	if leader.vx >= 1: #speed protection
-    	    		leader.vx = 1
-    	    	elif leader.vx <= -1:
-    	    		leader.vx = -1
-    	    	if leader.vy >= 1:
-    	    		leader.vy = 1
-    	    	elif leader.vy <= -1:
-    	    		leader.vy = -1
+    		    	if leader.vx >= 1: #speed protection
+    	    			leader.vx = 1
+    	    		elif leader.vx <= -1:
+    	    			leader.vx = -1
+    	    		if leader.vy >= 1:
+    	    			leader.vy = 1
+    	    		elif leader.vy <= -1:
+    	    			leader.vy = -1
 				
-				read.write(str(leader.vx)+" "+str(leader.vy)+" ");
-				read.write(str(current_milli_time())+"\n")
-
-				send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
+			read.write(str(leader.vx)+" "+str(leader.vy)+" ");
+			read.write(str(current_milli_time())+"\n")
+	
+			send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
 
     '''finished and landing'''
     vehicle.mode = VehicleMode("LAND") 

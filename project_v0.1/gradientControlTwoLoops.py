@@ -158,7 +158,7 @@ myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
 
 # open or create a file
-read = file('/home/odroid/218Drone/multiDrone_Com/velocity','a+')
+read = file('/home/odroid/multiDrone_Com/project_v0.1/velocity/datalog2_11_4','a+')
 
 
 if myserial.isOpen():
@@ -184,18 +184,18 @@ if myserial.isOpen():
     
     ''' make sure the zigbee conneciton is success before takeing off'''
     while True:
-		myserial.write('o'+str("%.8f" % vehicle.location.lon))
+	myserial.write('o'+str("%.8f" % vehicle.location.lon))
      	myserial.write('a'+str("%.8f" % vehicle.location.lat))
-		time.sleep(0.5)
-		tempos1 = positionList[0]
-		tempos2 = positionList[1]
-		print "waiting for connecting..."
+	time.sleep(0.5)
+	tempos1 = positionList[0]
+	tempos2 = positionList[1]
+	print "waiting for connecting..."
 		
-		if tempos1 != 255.0 and tempos2 != 255.0:
-			print "connecting ok!"
-			break
+	if tempos1 != 255.0 and tempos2 != 255.0:
+		print "connecting ok!"
+		break
 		
-    arm_and_takeoff(3.5)
+    #arm_and_takeoff(3.5)
     
     '''
     After the vehicle reaches a target height, do other things
@@ -235,19 +235,19 @@ if myserial.isOpen():
                 neighbourLonToMeter = lastLonToM
                 neighbourLatToMeter = lastLatToM
             else:
-                neighbourLonToMeter = float(math.pi / 180) * R * positionList[0]
-                neighbourLatToMeter = float(math.pi / 180) * R * positionList[1]
+                neighbourLonToMeter = float(math.pi / 180) * R * neighbourLon
+                neighbourLatToMeter = float(math.pi / 180) * R * neighbourLat
                 lastLonToM = neighbourLonToMeter
                 lastLatToM = neighbourLatToMeter
 
     	if current_milli_time() - lastRecord_s >= delt_T_s:  #50ms
     		lastRecord_s = current_milli_time()
-    		print "[%s] current time is: %f" % (loop_cnt, lastRecord)
+    		print "[%s] current time is: %f" % (loop_cnt, lastRecord_s)
     		loop_cnt += 1
 
-			# control
-			leader.x = float(math.pi / 180) * R * vehicle.location.lat
-			leader.y = float(math.pi / 180) * R * vehicle.location.lon
+		# control
+		leader.x = float(math.pi / 180) * R * vehicle.location.lat
+		leader.y = float(math.pi / 180) * R * vehicle.location.lon
 	    	realV    = vehicle.velocity
 	    	leader.controller(leader.x, neighbourLatToMeter, leader.y, neighbourLonToMeter)
 
