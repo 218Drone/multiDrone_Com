@@ -159,6 +159,8 @@ print myserial.portstr
 
 # open or create a file
 read = file('/home/odroid/multiDrone_Com/project_v0.1/velocity/datalog_11_4','a+')
+#clear 
+read.truncate()
 
 if myserial.isOpen():
 
@@ -253,9 +255,9 @@ if myserial.isOpen():
     	    			leader.vy = -1
 				
 			read.write(str(leader.vx)+" "+str(leader.vy)+" ");
-			read.write(str(current_milli_time())+"\n")
+			read.write(str(current_milli_time())+"\n");
 	
-			send_ned_velocity(leader.vx, leader.vy, 0)  #vz = 0.0
+			send_ned_velocity(leader.vx, leader.vy, 0);  #vz = 0.0
 
     '''finished and landing'''
     vehicle.mode = VehicleMode("LAND") 

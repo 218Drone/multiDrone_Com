@@ -159,7 +159,8 @@ print myserial.portstr
 
 # open or create a file
 read = file('/home/odroid/multiDrone_Com/project_v0.1/velocity/datalog2_11_4','a+')
-
+#clear 
+read.truncate()
 
 if myserial.isOpen():
 
