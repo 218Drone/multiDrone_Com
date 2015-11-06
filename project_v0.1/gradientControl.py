@@ -170,7 +170,7 @@ if myserial.isOpen():
     R = 6371000    #meters
     CONST_VX0 = 0.0
     CONST_VY0 = 0.0
-    CONST_D12 = 8.0   #meter
+    CONST_D12 = 15.0   #meter
     not_received_flag = 0
 
     ''' child thread'''
@@ -192,7 +192,7 @@ if myserial.isOpen():
 		print "connecting ok!"
 		break
 		
-    #arm_and_takeoff(3.5)
+    arm_and_takeoff(3.5)
     
     '''
     After the vehicle reaches a target height, do other things
