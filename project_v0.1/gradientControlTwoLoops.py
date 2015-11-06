@@ -158,7 +158,7 @@ myserial = serial.Serial('/dev/ttyUSB1', 115200, timeout=None)
 print myserial.portstr
 
 # open or create a file
-read = file('/home/odroid/multiDrone_Com/project_v0.1/velocity/datalog2_11_4','a+')
+read = file('/home/odroid/multiDrone_Com/project_v0.1/velocity/datalog2_11_6','a+')
 #clear 
 read.truncate()
 
@@ -174,7 +174,7 @@ if myserial.isOpen():
     R = 6371000    #meters
     CONST_VX0 = 0.0
     CONST_VY0 = 0.0
-    CONST_D12 = 8.0   #meter
+    CONST_D12 = 15.0   #meter
     not_received_flag = 0
 
     ''' child thread'''
